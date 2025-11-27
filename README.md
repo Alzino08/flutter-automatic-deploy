@@ -5,7 +5,7 @@ Automate version bumping, changelog generation, and App Store/Play Store release
 Disclaimer:
 Guys, mind this is a project adjusted specifically to my needs. You should hook up your LLM and ask him to adjust so it works for you. For example, I'm using easy_localization and the pre-check is designed for this package specifically. 
 
-Once you provide it with API Key from the App Store (App Manager permission), it will automatically build, push, and submit the app for review for you.
+Once you provide it with API Keys from App Store Connect and Google Play, it will automatically build, push, and submit apps for review on both platforms.
 
 PR's or improvement ideas welcome. 
 
@@ -25,7 +25,7 @@ I think you could easily adjust it to any other framework, iOS and Android relea
 - **Universal version bumping** - Works with any Flutter project structure
 - **Auto-changelog generation** - Generates changelog from git commits using conventional commits
 - **iOS automation** - Build IPA, upload to App Store Connect, and auto-submit for review
-- **Android automation** - Build App Bundle and open release folder
+- **Android automation** - Build App Bundle, upload to Google Play, and auto-submit for review
 - **Pre-release validation** - Validates JSON files, translation coverage, and runs Flutter analyze
 - **Git integration** - Auto-commit, create tags, and push to remote
 
@@ -36,7 +36,7 @@ I think you could easily adjust it to any other framework, iOS and Android relea
 ```bash
 git clone https://github.com/filippkowalski/flutter-automatic-deploy.git
 cd flutter-automatic-deploy
-chmod +x bump_version.sh submit_to_app_store.py
+chmod +x bump_version.sh submit_to_app_store.py submit_to_google_play.py
 ```
 
 ### 2. Install globally (optional)
@@ -151,6 +151,7 @@ bump_version patch --dry-run
 | `APP_STORE_API_KEY_ID` | For iOS | App Store Connect API Key ID |
 | `APP_STORE_ISSUER_ID` | For iOS | App Store Connect Issuer ID |
 | `APP_STORE_P8_KEY_PATH` | Optional | Path to .p8 key file (defaults to `~/.appstoreconnect/private_keys/AuthKey_{KEY_ID}.p8`) |
+| `GOOGLE_PLAY_SERVICE_ACCOUNT` | Optional | Path to Google Play service account JSON (defaults to `~/.google-play/service-account.json`) |
 
 ## Project Structure Support
 
@@ -228,6 +229,60 @@ The `submit_to_app_store.py` script can also be used standalone:
 # Add to ~/.zshrc or ~/.bashrc
 export APP_STORE_API_KEY_ID=YOUR_KEY_ID
 export APP_STORE_ISSUER_ID=YOUR_ISSUER_ID
+```
+
+## Setting Up Google Play API
+
+**Important:** Google changed this workflow in 2024. You now create the Service Account in Google Cloud first, then invite it as a user to Play Console.
+
+### Step 1: Google Cloud Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project (or select an existing one)
+3. Search for **"Google Play Android Developer API"** and enable it
+4. Go to **IAM & Admin > Service Accounts**
+5. Click **+ Create Service Account**
+   - Name: e.g., `play-deploy`
+   - Role: Select **Service Accounts > Service Account User**
+6. Click on the created service account email
+7. Go to **Keys** tab > **Add Key** > **Create new key**
+8. Select **JSON** and download the file
+9. Save it to `~/.google-play/service-account.json`
+
+### Step 2: Google Play Console Setup
+
+1. Copy the service account email (e.g., `play-deploy@your-project.iam.gserviceaccount.com`)
+2. Go to [Google Play Console](https://play.google.com/console)
+3. Navigate to **Users and permissions**
+4. Click **Invite new users**
+5. Paste the service account email
+6. Grant permissions:
+   - **App permissions**: Select your app (or "All apps")
+   - **Account permissions**: Check "Release apps to testing tracks" and "Release apps to production"
+7. Click **Invite user**
+
+### Install Python dependencies (for Google Play)
+
+```bash
+pip3 install google-api-python-client google-auth
+```
+
+## Google Play Submission Script
+
+The `submit_to_google_play.py` script can also be used standalone:
+
+```bash
+# Submit to production
+./submit_to_google_play.py 1.13.0+32
+
+# Submit to internal testing track
+./submit_to_google_play.py 1.13.0+32 --track internal
+
+# Staged rollout (10%)
+./submit_to_google_play.py 1.13.0+32 --track production --rollout 10
+
+# Create as draft (no auto-submit)
+./submit_to_google_play.py 1.13.0+32 --draft
 ```
 
 ## Community Forks

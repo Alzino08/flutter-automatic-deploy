@@ -24,3 +24,7 @@ ENV/
 *.pem
 *.key
 AuthKey_*.p8
+
+# Claude Code
+.claude/
+CLAUDE.md

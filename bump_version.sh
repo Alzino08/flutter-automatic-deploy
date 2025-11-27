@@ -597,42 +597,100 @@ if [ "$RUN_RELEASE" = true ]; then
   fi
 
   # Android Release
+  GOOGLE_PLAY_SUCCESS=false
   if [ "$SKIP_ANDROID" = false ]; then
     echo ""
     echo -e "${CYAN}Android Release${NC}"
     echo -e "${BLUE}  Building App Bundle...${NC}"
     flutter build appbundle --release
 
-    echo -e "${BLUE}  Opening release folder...${NC}"
-    open build/app/outputs/bundle/release
-
     echo -e "${GREEN}✓ Android build complete${NC}"
-    echo -e "${YELLOW}  -> Upload manually to Google Play Console${NC}"
+
+    # Automatically upload to Google Play
+    GOOGLE_PLAY_SCRIPT="$(dirname "$0")/submit_to_google_play.py"
+    if [ -f "$GOOGLE_PLAY_SCRIPT" ]; then
+      # Check if service account is configured
+      GOOGLE_PLAY_SERVICE_ACCOUNT="${GOOGLE_PLAY_SERVICE_ACCOUNT:-$HOME/.google-play/service-account.json}"
+      if [ -f "$GOOGLE_PLAY_SERVICE_ACCOUNT" ]; then
+        echo ""
+        echo -e "${CYAN}Uploading to Google Play...${NC}"
+
+        # Check if required Python packages are installed
+        if ! python3 -c "from google.oauth2 import service_account; from googleapiclient.discovery import build" 2>/dev/null; then
+          echo -e "${YELLOW}Warning: Missing Python dependencies${NC}"
+          echo -e "${YELLOW}   Install with: pip3 install google-api-python-client google-auth${NC}"
+          echo -e "${YELLOW}   Opening folder for manual upload...${NC}"
+          open build/app/outputs/bundle/release
+        else
+          python3 "$GOOGLE_PLAY_SCRIPT" "$NEW_VERSION" --project-path "$PROJECT_ROOT"
+
+          if [ $? -eq 0 ]; then
+            echo -e "${GREEN}✓ Google Play upload complete${NC}"
+            GOOGLE_PLAY_SUCCESS=true
+          else
+            echo -e "${YELLOW}Warning: Google Play upload encountered issues${NC}"
+            echo -e "${YELLOW}   Opening folder for manual upload...${NC}"
+            open build/app/outputs/bundle/release
+          fi
+        fi
+      else
+        echo -e "${YELLOW}Warning: Google Play service account not configured${NC}"
+        echo -e "${YELLOW}   To enable auto-upload, save your service account JSON to:${NC}"
+        echo -e "${YELLOW}   ~/.google-play/service-account.json${NC}"
+        echo ""
+        echo -e "${BLUE}  Opening release folder for manual upload...${NC}"
+        open build/app/outputs/bundle/release
+      fi
+    else
+      echo -e "${BLUE}  Opening release folder...${NC}"
+      open build/app/outputs/bundle/release
+      echo -e "${YELLOW}  -> Upload manually to Google Play Console${NC}"
+    fi
   else
     echo -e "${YELLOW}Skipping Android${NC}"
+  fi
+
+  # Push commits to remote if --push-tag was specified
+  if [ "$PUSH_TAG" = true ] && [ -n "$GIT_ROOT" ]; then
+    echo ""
+    echo -e "${CYAN}Pushing commits to remote...${NC}"
+    cd "$GIT_ROOT"
+    git push
+    echo -e "${GREEN}✓ Commits pushed${NC}"
   fi
 
   echo ""
   echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo -e "${GREEN}Release Process Complete!${NC}"
   echo -e "${MAGENTA}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-  echo ""
-  echo -e "${CYAN}Next steps:${NC}"
-  [ "$SKIP_ANDROID" = false ] && echo -e "  ${BLUE}1.${NC} Upload Android App Bundle to Google Play Console"
 
-  if [ "$AUTO_COMMIT" = false ]; then
-    echo -e "  ${BLUE}2.${NC} Commit: ${YELLOW}git add . && git commit -m \"chore: release v$NEW_VERSION\"${NC}"
-    NEXT_STEP=3
-  else
-    NEXT_STEP=2
+  # Build next steps list based on what was NOT automated
+  NEXT_STEPS=()
+
+  # Only show Google Play manual upload if it failed
+  if [ "$SKIP_ANDROID" = false ] && [ "$GOOGLE_PLAY_SUCCESS" = false ]; then
+    NEXT_STEPS+=("Upload Android App Bundle to Google Play Console")
   fi
 
+  # Only show push instructions if --push-tag was not used
   if [ "$PUSH_TAG" = false ]; then
-    echo -e "  ${BLUE}${NEXT_STEP}.${NC} Push tag: ${YELLOW}git push origin v$NEW_VERSION${NC}"
-    NEXT_STEP=$((NEXT_STEP + 1))
+    NEXT_STEPS+=("Push tag: ${YELLOW}git push origin v$NEW_VERSION${NC}")
+    NEXT_STEPS+=("Push commits: ${YELLOW}git push${NC}")
   fi
 
-  echo -e "  ${BLUE}${NEXT_STEP}.${NC} Push commits: ${YELLOW}git push${NC}"
+  # Only show next steps if there are any
+  if [ ${#NEXT_STEPS[@]} -gt 0 ]; then
+    echo ""
+    echo -e "${CYAN}Next steps:${NC}"
+    STEP_NUM=1
+    for step in "${NEXT_STEPS[@]}"; do
+      echo -e "  ${BLUE}${STEP_NUM}.${NC} $step"
+      STEP_NUM=$((STEP_NUM + 1))
+    done
+  else
+    echo ""
+    echo -e "${GREEN}All done! Both stores submitted, commits and tags pushed.${NC}"
+  fi
 else
   echo ""
   echo -e "${GREEN}Version bump complete!${NC}"
