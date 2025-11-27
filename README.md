@@ -34,7 +34,7 @@ I think you could easily adjust it to any other framework, iOS and Android relea
 ### 1. Clone or download the scripts
 
 ```bash
-git clone https://github.com/yourusername/flutter-automatic-deploy.git
+git clone https://github.com/filippkowalski/flutter-automatic-deploy.git
 cd flutter-automatic-deploy
 chmod +x bump_version.sh submit_to_app_store.py
 ```
