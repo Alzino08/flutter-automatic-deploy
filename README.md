@@ -2,6 +2,15 @@
 
 Automate version bumping, changelog generation, and App Store/Play Store releases for Flutter projects.
 
+Disclaimer:
+Guys, mind this is a project adjusted specifically to my needs. You should hook up your LLM and ask him to adjust so it works for you. For example, I'm using easy_localization and the pre-check is designed for this package specifically. 
+
+Once you provide it with API Key from the App Store (App Manager permission), it will automatically build, push, and submit the app for review for you.
+
+PR's or improvement ideas welcome. 
+
+I think you could easily adjust it to any other framework, iOS and Android release are universal so that should be an easy switch.
+
 **Built by Filip Kowalski**
 - X: [@filippkowalski](https://x.com/filippkowalski)
 - Website: [fkowalski.com](https://fkowalski.com)
